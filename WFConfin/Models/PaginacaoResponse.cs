@@ -1,0 +1,14 @@
+﻿namespace WFConfin.Models
+{
+    public class PaginacaoResponse<T> where T : class
+    {
+
+        public IEnumerable<T> Dados { get; set; }
+        public long TotalLinhas { get; set; }
+        public int Skip { get; set; }
+        public int Take {get; set;  }
+
+
+
+    }
+}

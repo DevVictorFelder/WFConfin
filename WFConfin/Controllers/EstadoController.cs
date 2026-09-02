@@ -65,6 +65,90 @@ namespace WFConfin.Controllers
 
         }
 
+
+
+        [HttpGet("Pesquisa")]
+        public IActionResult GetEstadoPesquisa([FromQuery] string valor)
+        {
+
+            try
+            {
+                //Querry Criteria
+                var lista = from o in _context.Estado.ToList()
+                            where o.Sigla.ToUpper().Contains(valor.ToUpper())
+                            || o.Nome.ToUpper().Contains(valor.ToUpper())
+                            select o;
+
+                return Ok(lista);
+
+                /* 
+                    select * from estado Where Upper(Sigla) like upper('%valo%') or Upper(nome) like ('%valor%')
+                */
+
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest($"Erro, consulta de Estado. Exceção: {e.Message}");
+
+            }
+
+
+        }
+
+
+
+
+        [HttpGet("Paginacao")]
+        public IActionResult GetEstadoPaginacao([FromQuery] string valor, int skip, int take, bool ordemDesc)
+        {
+
+            try
+            {
+                //Querry Criteria
+                var lista = from o in _context.Estado.ToList()
+                            where o.Sigla.ToUpper().Contains(valor.ToUpper())
+                            || o.Nome.ToUpper().Contains(valor.ToUpper())
+                            select o;
+
+                if (ordemDesc)
+                {
+                    lista = from o in lista
+                            orderby o.Nome descending
+                            select o;
+                }
+                else
+                {
+                    lista = from o in lista
+                            orderby o.Nome ascending
+                            select o;
+                }
+
+                var qtde = lista.Count();
+
+                lista = lista
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+
+                return Ok(lista);
+
+                /* 
+                    select * from estado Where Upper(Sigla) like upper('%valo%') or Upper(nome) like ('%valor%')
+                */
+
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest($"Erro, consulta de Estado. Exceção: {e.Message}");
+
+            }
+
+
+        }
+
+
         [HttpPost]
         public IActionResult PostEstados([FromBody] Estado estado)
         {
