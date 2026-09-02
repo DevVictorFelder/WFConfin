@@ -131,6 +131,8 @@ namespace WFConfin.Controllers
                     .Take(take)
                     .ToList();
 
+                var paginacaoResponse = new PaginacaoResponse<Estado>(lista, qtde, skip, take);
+
                 return Ok(lista);
 
                 /* 
