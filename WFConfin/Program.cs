@@ -1,6 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using WFConfin.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var ConnectionString = builder.Configuration.GetConnectionString("connectionPostegres");
+builder.Services.AddDbContext<WFConFinDbContext>(x => x.UseNpgsql(ConnectionString));
+
+
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
