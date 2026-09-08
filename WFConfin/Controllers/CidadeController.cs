@@ -40,6 +40,30 @@ namespace WFConfin.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetCidade([FromRoute] Guid id)
+        {
+            try
+            {
+
+                Cidade cidade = _context.Cidade.Find(id);
+                if (cidade != null)
+                {
+                    return Ok(cidade);
+                }
+                else
+                {
+                    return NotFound("Erro, na consulta da cidade");
+                }
+            }
+
+            catch (Exception e)
+            {
+                return BadRequest($"Erro na Exclusão de cidade. Exceção: {e.Message}");
+            }
+        }
+
+
 
         [HttpPost]
         public IActionResult PostCidade([FromBody] Cidade cidade)
