@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using WFConfin.Data;
 using WFConfin.Models;
 
@@ -18,7 +21,7 @@ namespace WFConfin.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetEstados()
+        public async Task <IActionResult> GetEstados()
         {
 
             try
@@ -38,12 +41,12 @@ namespace WFConfin.Controllers
         }
 
         [HttpGet("{sigla}")]
-        public IActionResult GetEstado([FromRoute] string sigla)
+        public async Task <IActionResult> GetEstado([FromRoute] string sigla)
         {
 
             try
             {
-                var estado = _context.Estado.Find(sigla);
+                var estado = await _context.Estado.FindAsync(sigla);
 
                 if (estado.Sigla == sigla && !string.IsNullOrEmpty(estado.Sigla))
                 {
@@ -68,7 +71,7 @@ namespace WFConfin.Controllers
 
 
         [HttpGet("Pesquisa")]
-        public IActionResult GetEstadoPesquisa([FromQuery] string valor)
+        public async Task <IActionResult> GetEstadoPesquisa([FromQuery] string valor)
         {
 
             try
@@ -100,7 +103,7 @@ namespace WFConfin.Controllers
 
 
         [HttpGet("Paginacao")]
-        public IActionResult GetEstadoPaginacao([FromQuery] string valor, int skip, int take, bool ordemDesc)
+        public async Task <IActionResult> GetEstadoPaginacao([FromQuery] string valor, int skip, int take, bool ordemDesc)
         {
 
             try
@@ -133,7 +136,7 @@ namespace WFConfin.Controllers
 
                 var paginacaoResponse = new PaginacaoResponse<Estado>(lista, qtde, skip, take);
 
-                return Ok(lista);
+                return Ok(paginacaoResponse);
 
                 /* 
                     select * from estado Where Upper(Sigla) like upper('%valo%') or Upper(nome) like ('%valor%')
@@ -152,14 +155,14 @@ namespace WFConfin.Controllers
 
 
         [HttpPost]
-        public IActionResult PostEstados([FromBody] Estado estado)
+        public async Task <IActionResult> PostEstados([FromBody] Estado estado) // async e task
         {
 
             try
             {
-                _context.Estado.Add(estado);
+               await _context.Estado.AddAsync(estado);// await
 
-                var valor = _context.SaveChanges();
+                var valor = await _context.SaveChangesAsync();
                 if (valor == 1)
                 {
                     return Ok("Sucesso, Estado incluido.");
@@ -180,14 +183,14 @@ namespace WFConfin.Controllers
         }
 
         [HttpPut]
-        public IActionResult PutEstados([FromBody] Estado estado)
+        public async Task <IActionResult> PutEstados([FromBody] Estado estado)
         {
 
             try
             {
                 _context.Estado.Update(estado);
 
-                var valor = _context.SaveChanges();
+                var valor = await _context.SaveChangesAsync();
                 if (valor == 1)
                 {
                     return Ok("Sucesso, Estado alterado.");
@@ -209,17 +212,26 @@ namespace WFConfin.Controllers
 
 
         [HttpDelete("{sigla}")]
-        public IActionResult DeleteEstados([FromRoute] string sigla)
+        public async Task <IActionResult> DeleteEstados([FromRoute] string sigla)
         {
 
             try
             {
-                var estado = _context.Estado.Find(sigla);
+                var estado = await _context.Estado.FindAsync(sigla);
 
                 if (estado.Sigla == sigla && !string.IsNullOrEmpty(estado.Sigla))
                 {
                     _context.Estado.Remove(estado);
-                    return Ok("Estado Foi Removido com sucesso!");
+                    var valor = await _context.SaveChangesAsync();
+                    if(valor == 1)
+                    {
+                        return Ok("Estado Foi Removido com sucesso!");
+                    }
+                    else
+                    {
+                        return BadRequest("Erro, Estado não removido!");
+                    }
+                    
                 }
 
                 else
@@ -230,7 +242,7 @@ namespace WFConfin.Controllers
             catch (Exception e)
             {
 
-                return BadRequest($"Erro, estado não incluido. Exceção: {e.Message}");
+                return BadRequest($"Erro, estado não alterado. Exceção: {e.Message}");
 
             }
 
