@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace WFConfin.Models
 {
@@ -10,7 +12,7 @@ namespace WFConfin.Models
 
         [Required(ErrorMessage = "O nome da pessoa é obrigatório")]//uma anotacao que utilizando o entity framework, indica que a propriedade abaixo é obrigatoria e um errorMessage que sera exibido caso a validacao falhe
         [StringLength(200, MinimumLength = 3, ErrorMessage = "O nome da pessoa deve ter entre 3 e 200 caracteres")]//uma anotacao que utilizando o entity framework, indica que a propriedade abaixo é obrigatoria e um errorMessage que sera exibido caso a validacao falhe, e que a propriedade abaixo tem tamanho maximo de 200 caracteres, e tamanho minimo de 3 caracteres e um errorMessage que sera exibido caso a validacao falhe
-        public string nome { get; set; }// Propriedade que representa o nome da pessoa, com validação de obrigatoriedade e tamanho mínimo e máximo
+        public string Nome { get; set; }// Propriedade que representa o nome da pessoa, com validação de obrigatoriedade e tamanho mínimo e máximo
 
         [StringLength(20, ErrorMessage = "O telefone deve ter no máximo 20 caracteres")]//uma anotacao que utilizando o entity framework, indica que a propriedade abaixo tem tamanho maximo de 20 caracteres e um errorMessage que sera exibido caso a validacao falhe
         public string Telefone { get; set; }// Propriedade que representa o telefone da pessoa, com validação de tamanho máximo de 20 caracteres
