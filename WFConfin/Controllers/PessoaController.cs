@@ -20,7 +20,7 @@ namespace WFConfin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> GetPessoas()
         {
             try
             {
