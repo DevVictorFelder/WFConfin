@@ -10,7 +10,7 @@ using WFConfin.Models;
 namespace WFConfin.Controllers
 {
     [ApiController]
-    [Route("api/controller")]
+    [Route("api/[controller]")]
     public class ContaController : Controller
     {
         private readonly WFConFinDbContext _context;
