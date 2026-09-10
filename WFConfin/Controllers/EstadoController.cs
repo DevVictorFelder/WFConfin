@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace WFConfin.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class EstadoController : Controller
     {
 
@@ -155,6 +157,7 @@ namespace WFConfin.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Gerente, Empregado")]
         public async Task <IActionResult> PostEstados([FromBody] Estado estado) // async e task
         {
 
@@ -183,6 +186,7 @@ namespace WFConfin.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Gerente, Empregado")]
         public async Task <IActionResult> PutEstados([FromBody] Estado estado)
         {
 
@@ -212,6 +216,7 @@ namespace WFConfin.Controllers
 
 
         [HttpDelete("{sigla}")]
+        [Authorize(Roles = "Gerente")]
         public async Task <IActionResult> DeleteEstados([FromRoute] string sigla)
         {
 
