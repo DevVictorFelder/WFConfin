@@ -16,9 +16,9 @@ namespace WFConfin.Models
         public string Login { get; set; }
 
         [Required(ErrorMessage = "A senha do usuário é obrigatória")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "A senha deve ter entre 6 e 20 caracteres")]  
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "A senha deve ter entre 6 e 20 caracteres")]  
         public string Password { get; set; }
-        
+        //é necessario realizar uma migrations para mudar o stringlengt no banco de dados
         [Required(ErrorMessage = "A função do usuário é obrigatória")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "A função deve ter entre 3 e 20 caracteres")]
         public string Funcao { get; set; }

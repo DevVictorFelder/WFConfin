@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace WFConfin.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsuarioController : Controller
     {
         private readonly WFConFinDbContext _context;
@@ -23,14 +25,18 @@ namespace WFConfin.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] UsuarioLogin usuariologin)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] UsuarioLogin usuarioLogin)
         {
-            var usuario = _context.Usuario.Where(x => x.Login == usuariologin.Login).FirstOrDefault();
+            var usuario = _context.Usuario.Where(x => x.Login == usuarioLogin.Login).FirstOrDefault();
             if (usuario == null)
             {
                 return NotFound("Usuário Inválido!");
             }
-            if (usuario.Password != usuariologin.Password)
+
+            var passwordHash = MD5Hash.CalcHash(usuarioLogin.Password);
+
+            if (usuario.Password != usuarioLogin.Password)
             {
                 return BadRequest("Senha inválida");
             }
@@ -62,6 +68,7 @@ namespace WFConfin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Gerente, Empregado")]
         public async Task<IActionResult> PostUsuario([FromBody] Usuario usuario)
         {
             try
@@ -71,6 +78,10 @@ namespace WFConfin.Controllers
                 {
                     return BadRequest("Erro, Informação invalida de login.");
                 }
+
+                string passwordHash = MD5Hash.CalcHash(usuario.Password);
+
+                usuario.Password = passwordHash;
 
                 await _context.Usuario.AddAsync(usuario);
                 var valor = await _context.SaveChangesAsync();
@@ -91,10 +102,15 @@ namespace WFConfin.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Gerente, Empregado")]
         public async Task<IActionResult> PutUsuario([FromBody] Usuario usuario)
         {
             try
             {
+                string passwordHash = MD5Hash.CalcHash(usuario.Password);
+
+                usuario.Password = passwordHash;
+
                 _context.Usuario.Update(usuario);
                 var valor = await _context.SaveChangesAsync();
                 if (valor == 1)
@@ -114,6 +130,7 @@ namespace WFConfin.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> DeleteUsuario([FromRoute] Guid id)
         {
             try
